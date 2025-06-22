@@ -1,21 +1,90 @@
 {
-  "_id": "68578d00cf926ef6a2fd6fec",
-  "index": 1,
-  "guid": "2863c536-52b2-48b4-87da-ebf12094f3c8",
-  "isActive": true,
-  "balance": "$1,938.03",
-  "picture": "http://placehold.it/32x32",
-  "age": 35,
-  "eyeColor": "brown",
-  "name": "Mara Casey",
-  "gender": "female",
-  "company": "COMTOURS",
-  "email": "maracasey@comtours.com",
-  "phone": "+1 (984) 532-3551",
-  "address": "472 Bush Street, Lopezo, Marshall Islands, 1628",
-  "about": "Eiusmod dolor officia nostrud veniam consectetur aliquip aliquip labore. Magna ullamco labore cillum laboris. Ut ullamco consectetur cupidatat incididunt duis amet.\r\n",
-  "registered": "2018-03-27T06:34:34 -07:00",
-  "latitude": 8.038746,
-  "longitude": "-2.2011431234",
-  "favoriteFruit": "banana"
+  "server": {
+    "maxWorkers": 4,
+    "port": 3001,
+    "secret": "JWT_SERVER_SECRET"
+  },
+  "auth": {
+    "token": "JWT_AUTH_TOKEN",
+    "allowedIps": "::1, 127.0.0.1",
+    "allowedOrigin": [
+      "https://app.yourdomain.com",
+      "http://localhost:6869"
+    ]
+  },
+  "minio": {
+    "masterServerEndPoint": "https://cdn.yourdomain.com",
+    "endPoints": [
+      {
+        "endPoint": "MINIO_IP_OR_HOST",
+        "accessKey": "MINIO_ACCESS_KEY",
+        "secretKey": "MINIO_SECRET_KEY",
+        "port": 9000,
+        "useSSL": "true"
+      }
+    ]
+  },
+  "websocket": {
+    "port": "3001",
+    "maxDevicesPerUser": 5,
+    "authTimeout": 5000,
+    "maxMessageSize": 2048,
+    "sessionTTL": 1800,
+    "idleTimeout": 120,
+    "messageTTL": 300,
+    "connectionWindowMs": 60000,
+    "maxConnections": 10
+  },
+  "email": {
+    "smtp": {
+      "host": "smtp.yourmail.com",
+      "port": 465,
+      "secure": true,
+      "auth": {
+        "user": "no-reply@yourdomain.com",
+        "pass": "EMAIL_PASSWORD"
+      }
+    },
+    "from": "no-reply@yourdomain.com"
+  },
+  "webpush": {
+    "contactEmail": "mailto:no-reply@yourdomain.com",
+    "vapidPublicKey": "PUBLIC_VAPID_KEY",
+    "vapidPrivateKey": "PRIVATE_VAPID_KEY"
+  },
+  "rabbitmq": {
+    "url": "amqp://localhost",
+    "exchange": "task_exchange",
+    "dlx": "task_dlx",
+    "prefetch": 10,
+    "retryTtl": 60000,
+    "maxRetries": 3,
+    "retryDelay": 1000,
+    "queues": {
+      "email": "email_queue",
+      "webpush": "webpush_queue",
+      "notification": "notification_queue",
+      "retry": "retry_queue",
+      "cleaner": "cleaner_queue"
+    }
+  },
+  "cleaner_service": {
+    "schedule": "0 0 * * *",
+    "jobConfig": {
+      "target": "both",
+      "daysBefore": 30,
+      "batchSize": 1000
+    }
+  },
+  "mongodb": {
+    "user": "",
+    "password": "",
+    "host": "localhost",
+    "port": "27016",
+    "dbname": "FileStore",
+    "secret": "JWT_MONGODB_SECRET"
+  },
+  "redis": {
+    "url": "redis://localhost:6379"
+  }
 }
