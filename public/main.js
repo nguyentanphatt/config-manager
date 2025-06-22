@@ -97,3 +97,32 @@ fetch(`${API_URL}/config`)
     });
   })
   .catch((err) => console.error(err));
+
+document.getElementById("addButton").addEventListener("click", () => {
+  document.getElementById("addModal").classList.remove("hidden");
+});
+
+document.getElementById("cancelAdd").addEventListener("click", () => {
+  document.getElementById("addModal").classList.add("hidden");
+});
+
+document.getElementById("addForm").addEventListener("submit", function (e) {
+  e.preventDefault();
+  const key = document.getElementById("addKey").value;
+  const value = document.getElementById("addValue").value;
+  fetch(`${API_URL}/config/add`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ key, value }),
+  })
+    .then((res) => {
+      if (!res.ok) throw new Error("Failed to add item");
+      return res.json();
+    })
+    .then(() => {
+      document.getElementById("addModal").classList.add("hidden");
+      document.getElementById("addForm").reset();
+      return fetch(`${API_URL}/config`);
+    });
+  //document.getElementById("addModal").classList.add("hidden");
+});
