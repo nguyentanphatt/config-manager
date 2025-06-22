@@ -1,0 +1,21 @@
+{
+  "_id": "68578d00cf926ef6a2fd6fec",
+  "index": 1,
+  "guid": "2863c536-52b2-48b4-87da-ebf12094f3c8",
+  "isActive": true,
+  "balance": "$1,938.03",
+  "picture": "http://placehold.it/32x32",
+  "age": 35,
+  "eyeColor": "brown",
+  "name": "Mara Casey",
+  "gender": "female",
+  "company": "COMTOURS",
+  "email": "maracasey@comtours.com",
+  "phone": "+1 (984) 532-3551",
+  "address": "472 Bush Street, Lopezo, Marshall Islands, 1628",
+  "about": "Eiusmod dolor officia nostrud veniam consectetur aliquip aliquip labore. Magna ullamco labore cillum laboris. Ut ullamco consectetur cupidatat incididunt duis amet.\r\n",
+  "registered": "2018-03-27T06:34:34 -07:00",
+  "latitude": 8.038746,
+  "longitude": "-2.2011431234",
+  "favoriteFruit": "banana"
+}

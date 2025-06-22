@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <title>Config Manager</title>
+  </head>
+  <body class="flex flex-col items-center justify-center px-3">
+    <h2 class="text-3xl font-bold py-10">Config Manager</h2>
+    <div class="my-4 w-full max-w-xl">
+      <input
+        type="text"
+        id="searchInput"
+        placeholder="Search by key..."
+        class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+      />
+    </div>
+    <table
+      id="configTable"
+      class="table-auto w-full border-collapse max-w-[1200px]"
+    >
+      <thead>
+        <tr class="bg-gray-200">
+          <th class="border px-4 py-2 text-left w-1/4">Key</th>
+          <th class="border px-4 py-2 text-left w-3/4">Value</th>
+          <th class="border px-4 py-2 text-left w-1/4">Action</th>
+        </tr>
+      </thead>
+      <tbody id="" class="text-sm">
+        <!-- rows append here -->
+      </tbody>
+    </table>
+  </body>
+  <script src="./main.js"></script>
+</html>
