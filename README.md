@@ -30,15 +30,15 @@ config-manager/
 ├── public/
 │ ├── index.html # Main interface
 │ └── main.js # JS logic for interaction
-
-## 🚀 How to Run
 ```
-### Backend
+## 🚀 How to Run
 
+### Backend
+```
 cd backend
 npm install
 node index.js | npm start
-
+```
 ### Frontend
 
 Serve using Live Server (e.g., VS Code Live Server extension), or
