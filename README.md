@@ -17,7 +17,7 @@ This project consists of two parts:
   - `DELETE /config/delete` — Remove a key from config
 
 ## 🧩 Folder Structure
-
+```
 config-manager/
 │
 ├── backend/
@@ -32,7 +32,7 @@ config-manager/
 │ └── main.js # JS logic for interaction
 
 ## 🚀 How to Run
-
+```
 ### Backend
 
 cd backend
