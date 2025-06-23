@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <title>Config Manager</title>
+  </head>
+  <body class="flex flex-col items-center justify-center px-3">
+    <h2 class="text-3xl font-bold py-5">Config Manager</h2>
+    <div class="my-4 w-full max-w-xl">
+      <input
+        type="text"
+        id="searchInput"
+        placeholder="Search by key..."
+        class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+      />
+    </div>
+    <div class="overflow-x-auto w-full max-w-[1200px] pb-5">
+      <div class="relative max-h-[400px] md:max-h-[500px] overflow-y-auto">
+        <table
+          id="configTable"
+          class="w-full border-collapse max-w-[1200px] min-w-[600px]"
+        >
+          <thead class="sticky top-0 border bg-gray-100">
+            <tr class="bg-gray-200">
+              <th class="border px-4 py-2 text-left w-1/4">Key</th>
+              <th class="border px-4 py-2 text-left w-3/4">Value</th>
+              <th class="border px-4 py-2 text-left w-1/4">Action</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+    <div
+      id="addModal"
+      class="fixed inset-0 bg-black/20 flex items-center justify-center z-50 hidden"
+    >
+      <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-lg">
+        <h3 class="text-xl font-bold mb-4">Add Config Item</h3>
+        <div class="">
+          <form id="formNew" class="flex flex-col gap-4">
+            <div class="flex gap-2">
+              <select id="keySelect" class="border px-3 py-2 rounded w-[40%]">
+                <option value="">Select key</option>
+              </select>
+              <input
+                type="text"
+                id="addKey"
+                placeholder="Key"
+                required
+                class="border px-3 py-2 rounded w-full"
+              />
+            </div>
+            <div class="flex gap-2">
+              <input
+                type="text"
+                id="addValue"
+                placeholder="Value"
+                required
+                class="border px-3 py-2 rounded w-full"
+              />
+              <select id="addType" class="border px-3 py-2 rounded" required>
+                <option value="">Select Type</option>
+                <option value="string">String</option>
+                <option value="number">Number</option>
+                <option value="array">Array</option>
+                <option value="object">Object</option>
+              </select>
+            </div>
+            <div class="flex justify-end gap-2">
+              <button
+                type="button"
+                id="cancelAdd"
+                class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+              >
+                Add
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <button
+      id="addButton"
+      class="w-[100px] px-5 py-2 bg-blue-500 hover:bg-blue-600 cursor-pointer text-white rounded-md"
+    >
+      Add
+    </button>
+  </body>
+  <script></script>
+  <script src="./main.js"></script>
+</html>
