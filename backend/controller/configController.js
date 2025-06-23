@@ -150,7 +150,21 @@ export const addConfigItem = async (req, res) => {
   } else if (Array.isArray(current)) {
     current.push({ [finalKey]: value });
   } else if (Array.isArray(current[finalKey])) {
-    current[finalKey].push(value);
+    if (Array.isArray(value)) {
+      current[finalKey].push(...value);
+    } else {
+      current[finalKey].push(value);
+    }
+  } else if (typeof value === "object" && !Array.isArray(value)) {
+    if (
+      typeof current[finalKey] === "object" &&
+      current[finalKey] !== null &&
+      !Array.isArray(current[finalKey])
+    ) {
+      Object.assign(current[finalKey], value);
+    } else {
+      current[finalKey] = value;
+    }
   } else if (
     typeof current[finalKey] === "object" &&
     current[finalKey] !== null
@@ -164,4 +178,28 @@ export const addConfigItem = async (req, res) => {
 
   fs.writeFileSync(configPath, JSON.stringify(data, null, 2), "utf8");
   res.json({ success: true });
+};
+
+/**
+ *
+ * @param {*} req
+ * @param {*} res
+ * @returns
+ * @description
+ * Receive a Key and filter from data to get the key - Value
+ * Response data
+ */
+export const fetchConfigItemByKey = async (req, res) => {
+  const { key } = req.params;
+  const data = JSON.parse(fs.readFileSync("./config.json", "utf8"));
+  const flattened = flattenObject(data);
+  const filtered = flattened.filter((item) =>
+    item.key.toLowerCase().includes(key)
+  );
+
+  if (filtered === undefined) {
+    return res.status(404).json({ error: "Key not found" });
+  }
+
+  res.json(filtered);
 };

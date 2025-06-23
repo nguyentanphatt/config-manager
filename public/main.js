@@ -1,7 +1,13 @@
 const API_URL = "http://localhost:3000/api";
 
 let configData = [];
-
+/**
+ *
+ * @param {*} data
+ * @description
+ * Render data to table
+ * Add action for delete and update button
+ */
 function renderTable(data) {
   const tbody = document.querySelector("#configTable tbody");
   tbody.innerHTML = "";
@@ -82,38 +88,95 @@ function renderTable(data) {
   });
 }
 
+/**
+ * @description
+ * Call the api to render on table
+ * Add option in select key in add form
+ * Call search api
+ */
+
 fetch(`${API_URL}/config`)
   .then((res) => res.json())
   .then((data) => {
     configData = data;
     renderTable(configData);
 
+    keySelect.innerHTML += configData
+      .map((item) => `<option value="${item.key}">${item.key}</option>`)
+      .join("");
+
     document.getElementById("searchInput").addEventListener("input", (e) => {
       const searchTerm = e.target.value.toLowerCase();
-      const filtered = configData.filter((item) =>
-        item.key.toLowerCase().includes(searchTerm)
-      );
-      renderTable(filtered);
+      const search = async (searchTerm) => {
+        const res = await fetch(`${API_URL}/config/${searchTerm}`);
+        const data = await res.json();
+        renderTable(data);
+      };
+      search(searchTerm);
     });
   })
   .catch((err) => console.error(err));
 
+/**
+ * @description
+ * Action add, cancel and select key on add form
+ */
 document.getElementById("addButton").addEventListener("click", () => {
   document.getElementById("addModal").classList.remove("hidden");
 });
 
 document.getElementById("cancelAdd").addEventListener("click", () => {
   document.getElementById("addModal").classList.add("hidden");
+  document.getElementById("formNew")?.reset();
+  document.getElementById("formExtend")?.reset();
 });
 
-document.getElementById("addForm").addEventListener("submit", function (e) {
+document.getElementById("keySelect").addEventListener("change", (e) => {
+  const selectedKey = e.target.value;
+  document.getElementById("addKey").value = selectedKey;
+});
+
+document.getElementById("formNew").addEventListener("submit", function (e) {
   e.preventDefault();
   const key = document.getElementById("addKey").value;
-  const value = document.getElementById("addValue").value;
+  const rawValue = document.getElementById("addValue").value;
+  const type = document.getElementById("addType").value;
+  let parsedValue;
+  if (type === "") {
+    alert("Please select type");
+    return;
+  } else if (type === "number") {
+    parsedValue = Number(rawValue);
+    if (isNaN(parsedValue)) {
+      alert("Please enter a valid number");
+      return;
+    }
+  } else if (type === "string") {
+    parsedValue = rawValue;
+  } else if (type === "array" || type === "object") {
+    try {
+      parsedValue = JSON.parse(rawValue);
+      if (type === "array" && !Array.isArray(parsedValue)) {
+        alert("Input is not a valid array");
+        return;
+      }
+      if (
+        type === "object" &&
+        (typeof parsedValue !== "object" || Array.isArray(parsedValue))
+      ) {
+        alert("Input is not a valid object");
+        return;
+      }
+    } catch (err) {
+      alert("Invalid JSON format");
+      return;
+    }
+  }
+
   fetch(`${API_URL}/config/add`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ key, value }),
+    body: JSON.stringify({ key, value: parsedValue }),
   })
     .then((res) => {
       if (!res.ok) throw new Error("Failed to add item");
@@ -124,5 +187,4 @@ document.getElementById("addForm").addEventListener("submit", function (e) {
       document.getElementById("addForm").reset();
       return fetch(`${API_URL}/config`);
     });
-  //document.getElementById("addModal").classList.add("hidden");
 });

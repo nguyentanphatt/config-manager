@@ -1,8 +1,9 @@
 {
   "server": {
-    "maxWorkers": "6",
-    "port": 3001,
-    "secret": "JWT_SERVER_SECRET"
+    "maxWorkers": 10,
+    "port": 3333,
+    "secret": "JWT_SERVER_SECRET",
+    "public": "public"
   },
   "auth": {
     "token": "JWT_AUTH_TOKEN",
@@ -87,5 +88,13 @@
   },
   "redis": {
     "url": "redis://localhost:6379"
+  },
+  "test": {
+    "test": {
+      "name": "a",
+      "age": 18
+    },
+    "col": 10,
+    "value": ["111", "222"]
   }
 }

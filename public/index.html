@@ -37,39 +37,55 @@
       id="addModal"
       class="fixed inset-0 bg-black/20 flex items-center justify-center z-50 hidden"
     >
-      <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+      <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-lg">
         <h3 class="text-xl font-bold mb-4">Add Config Item</h3>
-        <form id="addForm" class="flex flex-col gap-4">
-          <input
-            type="text"
-            id="addKey"
-            placeholder="Key"
-            required
-            class="border px-3 py-2 rounded"
-          />
-          <input
-            type="text"
-            id="addValue"
-            placeholder="Value"
-            required
-            class="border px-3 py-2 rounded"
-          />
-          <div class="flex justify-end gap-2">
-            <button
-              type="button"
-              id="cancelAdd"
-              class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-            >
-              Add
-            </button>
-          </div>
-        </form>
+        <div class="">
+          <form id="formNew" class="flex flex-col gap-4">
+            <div class="flex gap-2">
+              <select id="keySelect" class="border px-3 py-2 rounded w-[40%]">
+                <option value="">Select key</option>
+              </select>
+              <input
+                type="text"
+                id="addKey"
+                placeholder="Key"
+                required
+                class="border px-3 py-2 rounded w-full"
+              />
+            </div>
+            <div class="flex gap-2">
+              <input
+                type="text"
+                id="addValue"
+                placeholder="Value"
+                required
+                class="border px-3 py-2 rounded w-full"
+              />
+              <select id="addType" class="border px-3 py-2 rounded" required>
+                <option value="">Select Type</option>
+                <option value="string">String</option>
+                <option value="number">Number</option>
+                <option value="array">Array</option>
+                <option value="object">Object</option>
+              </select>
+            </div>
+            <div class="flex justify-end gap-2">
+              <button
+                type="button"
+                id="cancelAdd"
+                class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+              >
+                Add
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
     <button
