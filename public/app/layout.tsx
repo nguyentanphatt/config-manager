@@ -2,6 +2,7 @@
 import { Open_Sans } from "next/font/google";
 import "./globals.css";
 import Sidebar from "@/components/Sidebar";
+import { usePathname } from "next/navigation";
 
 const openSans = Open_Sans({
   variable: "--font-open-sans",
@@ -13,6 +14,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const pathname = usePathname();
   return (
     <html lang="en">
       <head>
@@ -23,7 +25,7 @@ export default function RootLayout({
         className={` ${openSans.variable} antialiased font-open-sans bg-gray-200`}
       >
         <div className="flex gap-5">
-          <Sidebar />
+          {pathname !== "/login" && <Sidebar />}
           {children}
         </div>
       </body>

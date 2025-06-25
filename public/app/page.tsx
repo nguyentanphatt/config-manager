@@ -1,12 +1,8 @@
 "use client";
-import Header from "@/components/Header";
-import {
-  faChevronDown,
-  faChevronRight,
-  faPen,
-  faTrash,
-} from "@fortawesome/free-solid-svg-icons";
+import RenderObject from "@/components/RenderObject";
+import { faSearch, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 const data = {
   server: {
@@ -103,173 +99,50 @@ const data = {
 
 export default function Home() {
   const [openKeys, setOpenKeys] = useState<Record<string, boolean>>({});
-  const [openChildKeys, setOpenChildKeys] = useState<Record<string, boolean>>(
-    {}
-  );
-  console.log(Object.entries(data));
-
+  const [search, setSearch] = useState("");
+  const router = useRouter();
+  const filteredData = Object.entries(data).filter(([groupKey, groupValue]) => {
+    if (!search) return true;
+    if (groupKey.toLowerCase().includes(search.toLowerCase())) return true;
+    return Object.values(groupValue).some((v) =>
+      String(v).toLowerCase().includes(search.toLowerCase())
+    );
+  });
   return (
     <div className="flex flex-col w-full">
-      <Header />
-      <div className="mr-10 border max-h-screen bg-white overflow-y-auto">
-        {Object.entries(data).map(([groupKey, groupValue]) => (
+      <div className="w-full flex items-center justify-between pr-10 py-5">
+        <div className="relative flex flex-wrap items-stretch w-[90%] transition-all rounded-lg ease-soft">
+          <span className="text-sm ease-soft leading-5.6 absolute z-50 -ml-px flex h-full items-center whitespace-nowrap rounded-lg rounded-tr-none rounded-br-none border border-r-0 border-transparent bg-transparent py-2 px-2.5 text-center font-normal text-slate-500 transition-all">
+            <FontAwesomeIcon icon={faSearch} size="1x" />
+          </span>
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="pl-9 text-sm focus:shadow-soft-primary-outline ease-soft w-1/100 leading-5.6 relative -ml-px block min-w-0 flex-auto rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding py-2 pr-3 text-gray-700 transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none focus:transition-shadow"
+            placeholder="Type here..."
+          />
+        </div>
+        <div
+          className="flex gap-2 items-center cursor-pointer"
+          onClick={() => router.push("/login")}
+        >
+          <FontAwesomeIcon icon={faUser} size="1x" />
+          <p>Sign in</p>
+        </div>
+      </div>
+      <div className="mr-10 border border-gray-300 border-t-0 max-h-[82vh] bg-white overflow-y-auto scrollbar-hide">
+        {filteredData.map(([groupKey, groupValue]) => (
           <div key={groupKey}>
-            <h2 className="w-full border font-bold p-2">{groupKey}</h2>
-            <div className="flex flex-col gap-1 p-2">
-              {Object.entries(groupValue).map(([key, value]) => {
-                const shouldHide =
-                  value === null ||
-                  value === undefined ||
-                  value === "" ||
-                  (Array.isArray(value) && value.length === 0);
-
-                if (shouldHide) return null;
-
-                return (
-                  <div key={key}>
-                    <div className="grid grid-cols-4 items-center">
-                      {Array.isArray(value) ? (
-                        <>
-                          <div
-                            className="col-span-2 flex items-center gap-2 h-[40px] cursor-pointer"
-                            onClick={() =>
-                              setOpenKeys((prev) => ({
-                                ...prev,
-                                [key]: !prev[key],
-                              }))
-                            }
-                          >
-                            <p className="pl-4">{key}</p>
-                            <FontAwesomeIcon
-                              icon={
-                                openKeys[key] ? faChevronDown : faChevronRight
-                              }
-                              size="sm"
-                            />
-                          </div>
-                          <div className="col-span-1" />
-                          <div className="flex justify-end gap-1" />
-                        </>
-                      ) : (
-                        <>
-                          <p className="pl-4 col-span-2">{key}</p>
-                          <p className="text-left">{String(value)}</p>
-                          <div className="flex justify-end gap-1">
-                            <div className="h-10 aspect-square flex items-center justify-center rounded bg-gradient-to-tl from-slate-800 to-gray-900 text-white cursor-pointer">
-                              <FontAwesomeIcon icon={faPen} size="1x" />
-                            </div>
-                            <div className="h-10 aspect-square flex items-center justify-center rounded bg-gradient-to-tl from-red-600 to-rose-400 text-white cursor-pointer">
-                              <FontAwesomeIcon icon={faTrash} size="1x" />
-                            </div>
-                          </div>
-                        </>
-                      )}
-                    </div>
-
-                    {/* Nếu là array và đang mở */}
-                    {Array.isArray(value) && openKeys[key] && (
-                      <div className="flex flex-col gap-1 mt-1">
-                        {value.map((item, idx) => {
-                          const isObject =
-                            typeof item === "object" && item !== null;
-                          const itemKey = `${key}-${idx}`; // ví dụ: endPoints-0
-
-                          return (
-                            <div key={itemKey}>
-                              <div className="grid grid-cols-4 items-center">
-                                <div
-                                  className="pl-8 col-span-2 flex items-center gap-2 cursor-pointer h-[40px]"
-                                  onClick={() =>
-                                    setOpenChildKeys((prev) => ({
-                                      ...prev,
-                                      [itemKey]: !prev[itemKey],
-                                    }))
-                                  }
-                                >
-                                  <p>
-                                    {isObject ? `${key} ${idx + 1}` : idx + 1}
-                                  </p>
-                                  {isObject && (
-                                    <FontAwesomeIcon
-                                      icon={
-                                        openChildKeys[itemKey]
-                                          ? faChevronDown
-                                          : faChevronRight
-                                      }
-                                      size="sm"
-                                    />
-                                  )}
-                                </div>
-
-                                {isObject ? (
-                                  <>
-                                    <p className="text-left" />
-                                    <div className="flex justify-end gap-1" />
-                                  </>
-                                ) : (
-                                  <>
-                                    <p className="text-left">{String(item)}</p>
-                                    <div className="flex justify-end gap-1">
-                                      <div className="h-10 aspect-square flex items-center justify-center rounded bg-gradient-to-tl from-slate-800 to-gray-900 text-white cursor-pointer">
-                                        <FontAwesomeIcon
-                                          icon={faPen}
-                                          size="1x"
-                                        />
-                                      </div>
-                                      <div className="h-10 aspect-square flex items-center justify-center rounded bg-gradient-to-tl from-red-600 to-rose-400 text-white cursor-pointer">
-                                        <FontAwesomeIcon
-                                          icon={faTrash}
-                                          size="1x"
-                                        />
-                                      </div>
-                                    </div>
-                                  </>
-                                )}
-                              </div>
-
-                              {/* Nếu là object và đang mở */}
-                              {isObject && openChildKeys[itemKey] && (
-                                <div className="flex flex-col gap-1 mt-1 ml-8">
-                                  {Object.entries(item).map(
-                                    ([subKey, subVal]) => (
-                                      <div
-                                        key={subKey}
-                                        className="grid grid-cols-4 items-center"
-                                      >
-                                        <p className="pl-8 col-span-2">
-                                          {subKey}
-                                        </p>
-                                        <p className="text-left">
-                                          {String(subVal)}
-                                        </p>
-                                        <div className="flex justify-end gap-1">
-                                          <div className="h-10 aspect-square flex items-center justify-center rounded bg-gradient-to-tl from-slate-800 to-gray-900 text-white cursor-pointer">
-                                            <FontAwesomeIcon
-                                              icon={faPen}
-                                              size="1x"
-                                            />
-                                          </div>
-                                          <div className="h-10 aspect-square flex items-center justify-center rounded bg-gradient-to-tl from-red-600 to-rose-400 text-white cursor-pointer">
-                                            <FontAwesomeIcon
-                                              icon={faTrash}
-                                              size="1x"
-                                            />
-                                          </div>
-                                        </div>
-                                      </div>
-                                    )
-                                  )}
-                                </div>
-                              )}
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
+            <h2 className="w-full border border-gray-300 border-l-0 border-r-0 font-bold p-2">
+              {groupKey}
+            </h2>
+            <RenderObject
+              data={groupValue}
+              parentKey={groupKey}
+              openKeys={openKeys}
+              setOpenKeys={setOpenKeys}
+            />
           </div>
         ))}
       </div>

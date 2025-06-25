@@ -26,20 +26,18 @@ const Sidebar = () => {
         >
           <div className="flex items-center gap-2">
             <div className="inline-block p-3 font-bold text-center text-white uppercase align-middle transition-all rounded-lg cursor-pointer bg-gradient-to-tl from-purple-700 to-pink-500 leading-pro text-xs ease-soft-in tracking-tight-soft shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85 hover:shadow-soft-xs">
-              <FontAwesomeIcon
-                icon={faListUl}
-                className=" text-white"
-                size="xl"
-              />
+              <FontAwesomeIcon icon={faListUl} size="xl" />
             </div>
             <p className="text-base text-black font-bold">Variable List</p>
           </div>
-          <FontAwesomeIcon
-            icon={faChevronRight}
-            className={`transform transition-transform duration-300 ${
-              open ? "rotate-90" : "rotate-0"
-            }`}
-          />
+          <div className="size-5 shrink-0">
+            <FontAwesomeIcon
+              icon={faChevronRight}
+              className={`w-full h-full transform transition-transform duration-300 ${
+                open ? "rotate-90" : "rotate-0"
+              }`}
+            />
+          </div>
         </div>
         <div
           className={`overflow-hidden transition-all duration-300 ease-in-out ${
