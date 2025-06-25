@@ -88,13 +88,5 @@
   },
   "redis": {
     "url": "redis://localhost:6379"
-  },
-  "test": {
-    "test": {
-      "name": "a",
-      "age": 18
-    },
-    "col": 10,
-    "value": ["111", "222"]
   }
 }
