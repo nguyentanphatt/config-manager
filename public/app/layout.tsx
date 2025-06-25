@@ -25,7 +25,9 @@ export default function RootLayout({
         className={` ${openSans.variable} antialiased font-open-sans bg-gray-200`}
       >
         <div className="flex gap-5">
-          {pathname !== "/login" && <Sidebar />}
+          <div className="hidden lg:flex">
+            {pathname !== "/login" && <Sidebar />}
+          </div>
           {children}
         </div>
       </body>

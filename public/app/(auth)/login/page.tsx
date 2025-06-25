@@ -10,7 +10,7 @@ const Page = () => {
   };
   return (
     <div className="w-full h-screen flex items-center justify-center">
-      <div className="flex flex-col gap-5 bg-white min-w-lg px-5 pt-5 pb-10 rounded-md">
+      <div className="flex flex-col gap-5 bg-white min-w-xs md:min-w-md px-5 pt-5 pb-10 rounded-md">
         <h1 className="text-[40px] font-bold text-center">Login</h1>
         <div className="flex flex-col gap-3">
           <p>Username</p>

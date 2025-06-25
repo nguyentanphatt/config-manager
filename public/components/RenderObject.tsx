@@ -22,7 +22,7 @@ const RenderObject = ({
   setOpenKeys,
 }: RenderObjectProps) => {
   return (
-    <div className="flex flex-col gap-1 mt-1 px-2 pb-1">
+    <div className="flex flex-col gap-1">
       {Object.entries(data).map(([key, value]) => {
         const currentKey = `${parentKey}.${key}`;
         const isArray = Array.isArray(value);
@@ -43,7 +43,7 @@ const RenderObject = ({
                   }
                 }}
               >
-                <p style={{ marginLeft: `${level * 10}px` }}>{key}</p>
+                <p style={{ marginLeft: `${level * 15}px` }}>{key}</p>
                 {(isArray || isObject) && (
                   <div className="size-5 shrink-0">
                     <FontAwesomeIcon
@@ -63,7 +63,7 @@ const RenderObject = ({
               ) : (
                 <>
                   <p className="text-left">{String(value)}</p>
-                  <div className="flex justify-end gap-1">
+                  <div className="flex justify-end gap-1 pr-1">
                     <div
                       onClick={() => console.log(parentKey + "." + key)}
                       className="w-10 h-10 flex items-center justify-center rounded bg-gradient-to-tl from-slate-800 to-gray-900 text-white cursor-pointer"
@@ -121,7 +121,7 @@ const RenderObject = ({
                         ) : (
                           <>
                             <p className="text-left">{String(item)}</p>
-                            <div className="flex justify-end gap-1">
+                            <div className="flex justify-end gap-1 pr-1">
                               <div
                                 onClick={() =>
                                   console.log(

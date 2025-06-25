@@ -1,6 +1,7 @@
 "use client";
 import RenderObject from "@/components/RenderObject";
-import { faSearch, faUser } from "@fortawesome/free-solid-svg-icons";
+import Sidebar from "@/components/Sidebar";
+import { faBars, faSearch, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -100,6 +101,7 @@ const data = {
 export default function Home() {
   const [openKeys, setOpenKeys] = useState<Record<string, boolean>>({});
   const [search, setSearch] = useState("");
+  const [open, setOpen] = useState(false);
   const router = useRouter();
   const filteredData = Object.entries(data).filter(([groupKey, groupValue]) => {
     if (!search) return true;
@@ -110,8 +112,29 @@ export default function Home() {
   });
   return (
     <div className="flex flex-col w-full">
-      <div className="w-full flex items-center justify-between pr-10 py-5">
-        <div className="relative flex flex-wrap items-stretch w-[90%] transition-all rounded-lg ease-soft">
+      <div className="w-full flex items-center justify-between px-5 lg:px-0 lg:pr-10 py-5">
+        <div
+          className="lg:hidden p-3 cursor-pointer text-black z-50 relative"
+          onClick={() => setOpen(true)}
+        >
+          <FontAwesomeIcon icon={faBars} className="w-5 h-5" />
+        </div>
+
+        {open && (
+          <div
+            className="fixed inset-0 bg-opacity-30 z-40"
+            onClick={() => setOpen(false)}
+          />
+        )}
+
+        <div
+          className={`fixed top-0 left-0 h-full w-80 bg-white z-50 shadow-md transform transition-transform duration-300 ${
+            open ? "translate-x-0" : "-translate-x-full"
+          }`}
+        >
+          <Sidebar />
+        </div>
+        <div className="relative flex flex-wrap items-stretch w-[50%] md:w-[80%] transition-all rounded-lg ease-soft">
           <span className="text-sm ease-soft leading-5.6 absolute z-50 -ml-px flex h-full items-center whitespace-nowrap rounded-lg rounded-tr-none rounded-br-none border border-r-0 border-transparent bg-transparent py-2 px-2.5 text-center font-normal text-slate-500 transition-all">
             <FontAwesomeIcon icon={faSearch} size="1x" />
           </span>
@@ -131,20 +154,22 @@ export default function Home() {
           <p>Sign in</p>
         </div>
       </div>
-      <div className="mr-10 border border-gray-300 border-t-0 max-h-[82vh] bg-white overflow-y-auto scrollbar-hide">
-        {filteredData.map(([groupKey, groupValue]) => (
-          <div key={groupKey}>
-            <h2 className="w-full border border-gray-300 border-l-0 border-r-0 font-bold p-2">
-              {groupKey}
-            </h2>
-            <RenderObject
-              data={groupValue}
-              parentKey={groupKey}
-              openKeys={openKeys}
-              setOpenKeys={setOpenKeys}
-            />
-          </div>
-        ))}
+      <div className="mx-5 lg:mx-0 lg:mr-10 border border-gray-300 border-t-0 overflow-x-auto max-h-[82vh] bg-white overflow-y-auto scrollbar-hide">
+        <div className="min-w-[650px] overflow-x-auto">
+          {filteredData.map(([groupKey, groupValue]) => (
+            <div key={groupKey}>
+              <h2 className="w-full border border-gray-300 border-l-0 border-r-0 font-bold p-2 my-2">
+                {groupKey}
+              </h2>
+              <RenderObject
+                data={groupValue}
+                parentKey={groupKey}
+                openKeys={openKeys}
+                setOpenKeys={setOpenKeys}
+              />
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
