@@ -10,5 +10,15 @@
  */
 
 export function parseKeyPath(keyPath) {
-  return keyPath.replace(/\[(\d+)\]/g, ".$1").split(".");
+  const parts = [];
+
+  keyPath.split(".").forEach((segment) => {
+    const regex = /([^\[\]]+)|\[(\d+)\]/g;
+    let match;
+    while ((match = regex.exec(segment)) !== null) {
+      parts.push(match[1] ?? match[2]);
+    }
+  });
+
+  return parts;
 }

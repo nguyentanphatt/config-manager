@@ -1,18 +1,34 @@
 "use client";
 import { LogoIcon } from "@/contants/image";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faChevronRight,
   faListUl,
   faPlus,
 } from "@fortawesome/free-solid-svg-icons";
+import { fetchTopKeyConfig } from "@/module/configService";
+import { usePathname, useRouter } from "next/navigation";
 const Sidebar = () => {
   const [open, setOpen] = useState(false);
+  const [topkey, setTopkey] = useState<string[]>([]);
+  const router = useRouter();
+  const pathname = usePathname();
+  const fetchTopKey = async () => {
+    const response = await fetchTopKeyConfig();
+    setTopkey(response);
+  };
+
+  useEffect(() => {
+    fetchTopKey();
+  }, []);
   return (
     <div className="flex flex-col gap-5 mt-5 px-5 lg:px-0 lg:ml-5 max-w-80">
-      <div className="flex items-center gap-3">
+      <div
+        className="flex items-center gap-3 cursor-pointer"
+        onClick={() => router.push("/")}
+      >
         <Image src={LogoIcon} alt="logo" width={100} height={50} />
         <p className="text-base font-bold uppercase text-black">
           config manager
@@ -41,16 +57,27 @@ const Sidebar = () => {
         </div>
         <div
           className={`overflow-hidden transition-all duration-300 ease-in-out ${
-            open ? "max-h-60 opacity-100 mt-2" : "max-h-0 opacity-0"
+            open ? "max-h-60 opacity-100 my-2" : "max-h-0 opacity-0"
           }`}
         >
-          <ul className="ml-6 flex flex-col gap-2 text-sm text-gray-600">
-            {["Server", "Auth", "Minio", "Redis"].map((item, index) => (
+          <ul className="ml-6 flex flex-col gap-2 text-sm">
+            {topkey?.map((item, index) => (
               <li
                 key={index}
-                className="flex items-center gap-2 hover:text-black cursor-pointer"
+                className={`flex items-center gap-2 hover:text-black cursor-pointer ${
+                  pathname === `/keys/${item}`
+                    ? "text-black font-bold"
+                    : "text-gray-600 font-normal"
+                }`}
+                onClick={() => router.push(`/keys/${item}`)}
               >
-                <span className="w-2 h-2 bg-gray-400 rounded-full inline-block" />
+                <span
+                  className={`w-2 h-2 rounded-full inline-block transition-all duration-300 ${
+                    pathname === `/keys/${item}`
+                      ? "scale-125 bg-black text-black"
+                      : "scale-100 text-gray-600 bg-gray-400"
+                  }`}
+                />
                 {item}
               </li>
             ))}

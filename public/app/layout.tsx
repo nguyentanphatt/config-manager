@@ -3,6 +3,7 @@ import { Open_Sans } from "next/font/google";
 import "./globals.css";
 import Sidebar from "@/components/Sidebar";
 import { usePathname } from "next/navigation";
+import { Toaster } from "sonner";
 
 const openSans = Open_Sans({
   variable: "--font-open-sans",
@@ -28,6 +29,7 @@ export default function RootLayout({
           <div className="hidden lg:flex">
             {pathname !== "/login" && <Sidebar />}
           </div>
+          <Toaster duration={3000} richColors position="top-center" />
           {children}
         </div>
       </body>

@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:3000/api";
+const API_URL = "http://localhost:4000/api";
 
 let configData = [];
 /**
@@ -38,7 +38,7 @@ function renderTable(data) {
         const key = row.querySelector(".item-key").textContent;
         console.log(`Deleting key: ${key}`);
 
-        fetch(`${API_URL}/config/delete/${encodeURIComponent(key)}`, {
+        /* fetch(`${API_URL}/config/delete/${encodeURIComponent(key)}`, {
           method: "DELETE",
         })
           .then((res) => {
@@ -48,7 +48,7 @@ function renderTable(data) {
               throw new Error("Failed to delete item");
             }
           })
-          .catch((err) => console.error(err));
+          .catch((err) => console.error(err)); */
       });
     }
 

@@ -3,15 +3,16 @@ import path from "path";
 import { flattenObject } from "../utils/flattenObject.js";
 import { getNestedTarget } from "../utils/getNestedTarget.js";
 import { parseKeyPath } from "../utils/parseKeyPath.js";
+import { containsDeepKeyOnly } from "../utils/containsDeepKeyOnly.js";
 /**
  * @description
  * Read data from config.json
- * Flatten it and return as JSON response
+ * Return response in json
  */
 export const fetchConfig = async (req, res) => {
   const data = JSON.parse(fs.readFileSync("./config.json", "utf8"));
-  const flattened = flattenObject(data);
-  res.json(flattened);
+  //const flattened = flattenObject(data);
+  res.json(data);
 };
 
 /**
@@ -21,14 +22,14 @@ export const fetchConfig = async (req, res) => {
  * @returns
  * @description
  * Get the key from request param
- * Convert the key if it is an array index then read the data
- * Get the parent object of the key
- * Return not found if the key is not found
- * If key is array [auth, allowedOrigin, 1]
- * It will delete the item at index 1 of allowedOrigin array
- * If key is not an array, it will delete the key from the parent object
- * return success response
+ * Convert the key by getKeyPath
+ * Delete parent[key]
+ * Continue check if parent key and grand parent key (case: object in array, array in array)
+ * If parent is array and null then delete it
+ * Else parent is object then check grandparent. If grandparent is array then delete th child object when null util all child is null then remove grandparent
+ * If parent is object or array just remove it when it null
  */
+
 export const deleteConfigItem = async (req, res) => {
   const { key } = req.params;
   const keys = parseKeyPath(key);
@@ -50,6 +51,57 @@ export const deleteConfigItem = async (req, res) => {
     }
   } else {
     delete parent[lastKey];
+  }
+
+  if (keys.length > 1) {
+    const parentKeys = keys.slice(0, -1);
+    const grandParent = getNestedTarget(data, parentKeys);
+    const parentKey = parentKeys[parentKeys.length - 1];
+    if (Array.isArray(parent)) {
+      if (parent.length === 0) {
+        if (Array.isArray(grandParent)) {
+          const idx = parseInt(parentKey);
+          if (!isNaN(idx) && idx < grandParent.length) {
+            grandParent.splice(idx, 1);
+          }
+        } else if (grandParent && typeof grandParent === "object") {
+          delete grandParent[parentKey];
+        }
+      }
+    } else if (grandParent && Array.isArray(grandParent)) {
+      const idx = parseInt(parentKey);
+      if (
+        !isNaN(idx) &&
+        typeof parent === "object" &&
+        parent !== null &&
+        Object.keys(parent).length === 0
+      ) {
+        grandParent.splice(idx, 1);
+        const greatGrandParent = getNestedTarget(data, parentKeys.slice(0, -1));
+        const greatGrandParentKey =
+          parentKeys.length > 1 ? parentKeys[parentKeys.length - 2] : null;
+        if (
+          grandParent.length === 0 &&
+          greatGrandParent &&
+          typeof greatGrandParent === "object" &&
+          greatGrandParentKey
+        ) {
+          delete greatGrandParent[greatGrandParentKey];
+        }
+      }
+    } else if (grandParent && typeof grandParent === "object") {
+      if (
+        parent &&
+        typeof parent === "object" &&
+        !Array.isArray(parent) &&
+        Object.keys(parent).length === 0
+      ) {
+        delete grandParent[parentKey];
+      }
+      if (Array.isArray(parent) && parent.length === 0) {
+        delete grandParent[parentKey];
+      }
+    }
   }
 
   fs.writeFileSync("./config.json", JSON.stringify(data, null, 2), "utf8");
@@ -186,20 +238,48 @@ export const addConfigItem = async (req, res) => {
  * @param {*} res
  * @returns
  * @description
- * Receive a Key and filter from data to get the key - Value
- * Response data
+ * Receive a Key and filter from data to get json
  */
 export const fetchConfigItemByKey = async (req, res) => {
   const { key } = req.params;
+  const search = key?.toLowerCase();
   const data = JSON.parse(fs.readFileSync("./config.json", "utf8"));
-  const flattened = flattenObject(data);
-  const filtered = flattened.filter((item) =>
-    item.key.toLowerCase().includes(key)
-  );
 
-  if (filtered === undefined) {
-    return res.status(404).json({ error: "Key not found" });
+  if (!search) return res.json(data);
+
+  const filtered = Object.entries(data)
+    .filter(([groupKey, groupValue]) => {
+      return (
+        groupKey.toLowerCase().includes(search) ||
+        containsDeepKeyOnly(groupValue, search)
+      );
+    })
+    .reduce((acc, [k, v]) => {
+      acc[k] = v;
+      return acc;
+    }, {});
+
+  if (Object.keys(filtered).length === 0) {
+    return res.status(404).json({ error: "No matching key found" });
   }
 
   res.json(filtered);
+};
+
+/**
+ *
+ * @param {*} req
+ * @param {*} res
+ * Get top level key and return in a array
+ * Example: ["server", "auth",...]
+ */
+export const fetchTopLevelKeys = async (req, res) => {
+  try {
+    const data = JSON.parse(fs.readFileSync("./config.json", "utf8"));
+    const topLevelKeys = Object.keys(data);
+    res.json(topLevelKeys);
+  } catch (error) {
+    console.error("Error reading config.json:", error);
+    res.status(500).json({ error: "Failed to read config file" });
+  }
 };
