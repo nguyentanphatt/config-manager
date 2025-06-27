@@ -1,48 +1,97 @@
 "use client";
+import ConfigForm from "@/components/ConfigForm";
 import Header from "@/components/Header";
-import React, { useState } from "react";
-const data = {
-  server: {
-    maxWorkers: 10,
-    port: 3333,
-    secret: "JWT_SERVER_SECRET",
-  },
-};
-
-type Props = {
-  data: Record<string, any>; // Ví dụ: server object
-  onChange?: (key: string, value: string) => void;
-};
-
-const ConfigForm = ({ data, onChange }: Props) => {
-  return (
-    <div className="flex flex-col gap-4">
-      {Object.entries(data).map(([key, value]) => (
-        <div key={key} className="flex items-center gap-4">
-          <label className="w-32 font-medium">{key}:</label>
-          <input
-            type="text"
-            defaultValue={value}
-            className="border px-3 py-1 rounded w-full"
-            onChange={(e) => onChange?.(key, e.target.value)}
-          />
-        </div>
-      ))}
-    </div>
-  );
-};
+import { descriptions } from "@/contants/data";
+import { updateNestedValue } from "@/lib/updateNestedValue";
+import {
+  fetchConfigDataByParentKey,
+  updateConfigData,
+} from "@/module/configService";
+import { useParams, useSearchParams } from "next/navigation";
+import React, { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 const Page = () => {
   const [search, setSearch] = useState("");
-  const handleChange = (k: string, val: string) => {
-    console.log(k + " " + val);
+  const [data, setData] = useState<Record<string, any>>({});
+  const [originalData, setOriginalData] = useState<Record<string, any>>({});
+  const [loading, setLoading] = useState(false);
+  const searchParams = useSearchParams();
+  const focusKey = searchParams?.get("id") ?? "";
+  const { key } = useParams();
+  const fetchParentData = async () => {
+    setLoading(true);
+    try {
+      const response = await fetchConfigDataByParentKey(String(key ?? ""));
+      setData(response);
+      setOriginalData(JSON.parse(JSON.stringify(response)));
+    } finally {
+      setLoading(false);
+    }
   };
+  useEffect(() => {
+    fetchParentData();
+  }, []);
+
+  const handleChange = (k: string, val: string) => {
+    setData((prev) => updateNestedValue(prev, k, val));
+  };
+
+  const handleReset = () => {
+    setData(JSON.parse(JSON.stringify(originalData)));
+    toast.success("Reset successful");
+  };
+
+  const handleUpdate = async () => {
+    try {
+      await updateConfigData(String(key), data);
+      toast.success("Update successful");
+    } catch (error) {
+      console.error("Update failed", error);
+      toast.error("Update failed");
+    }
+  };
+
   return (
     <div className="flex flex-col w-full">
       <Header value={search} onChange={setSearch} />
-      <div className="mx-5 lg:mx-0 lg:mr-10 border border-gray-300 border-t-0 overflow-x-auto max-h-[82vh] bg-white overflow-y-auto scrollbar-hide">
-        <ConfigForm data={data.server} onChange={handleChange} />
-      </div>
+      {loading ? (
+        <div className="flex justify-center items-center h-40">
+          <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-gray-600"></div>
+        </div>
+      ) : (
+        <>
+          <div className="mx-5 lg:mx-0 lg:mr-10 border border-gray-300 border-t-0 overflow-x-auto max-h-[78vh] bg-white overflow-y-auto scrollbar-hide rounded-md">
+            {key && descriptions[String(key)] && (
+              <div className="pl-2 lg:pl-4 pt-2 lg:pt-5 text-gray-700 text-base">
+                {"*"}
+                {descriptions[String(key)]}
+              </div>
+            )}
+            <ConfigForm
+              data={data}
+              onChange={handleChange}
+              focusKey={focusKey}
+            />
+          </div>
+          <div className="flex gap-2 py-5 justify-end mx-2 lg:mx-0 lg:mr-7">
+            <button
+              type="button"
+              onClick={handleReset}
+              className="inline-block px-6 py-3 mr-3 font-bold text-center uppercase align-middle transition-all bg-transparent border rounded-lg cursor-pointer border-red-500 leading-pro text-xs ease-soft-in tracking-tight-soft shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85 hover:shadow-soft-xs text-red-500"
+            >
+              Reset Default
+            </button>
+            <button
+              type="button"
+              onClick={handleUpdate}
+              className="inline-block px-6 py-3 mr-3 font-bold text-center text-white uppercase align-middle transition-all rounded-lg cursor-pointer bg-gradient-to-tl from-purple-700 to-pink-500 leading-pro text-xs ease-soft-in tracking-tight-soft shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85 hover:shadow-soft-xs"
+            >
+              Apply
+            </button>
+          </div>
+        </>
+      )}
     </div>
   );
 };

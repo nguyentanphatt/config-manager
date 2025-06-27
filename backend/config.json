@@ -1,7 +1,7 @@
 {
   "server": {
-    "maxWorkers": 10,
-    "port": 3333,
+    "maxWorkers": 12,
+    "port": 3000,
     "secret": "JWT_SERVER_SECRET"
   },
   "auth": {

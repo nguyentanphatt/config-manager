@@ -4,10 +4,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useState } from "react";
 import Sidebar from "./Sidebar";
 import { useRouter } from "next/navigation";
-interface SearchInputProps {
-  value: string;
-  onChange: (value: string) => void;
-}
+import { SearchInputProps } from "@/contants/type";
+
 const Header = ({ value, onChange }: SearchInputProps) => {
   const [open, setOpen] = useState(false);
   const router = useRouter();

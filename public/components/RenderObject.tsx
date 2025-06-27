@@ -9,6 +9,7 @@ import {
 import { useState } from "react";
 import { deleteConfigKey } from "@/module/configService";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 interface RenderObjectProps {
   data: any;
@@ -28,7 +29,7 @@ const RenderObject = ({
   fetchData,
 }: RenderObjectProps) => {
   const [deleteKey, setDeleteKey] = useState<string | null>(null);
-
+  const router = useRouter();
   const handleDelete = async () => {
     if (deleteKey) {
       try {
@@ -113,14 +114,18 @@ const RenderObject = ({
                     <p className="text-left">{String(value)}</p>
                     <div className="flex justify-end gap-1 pr-1">
                       <div
-                        onClick={() => console.log(parentKey + "." + key)}
-                        className="w-10 h-10 flex items-center justify-center rounded bg-gradient-to-tl from-slate-800 to-gray-900 text-white cursor-pointer"
+                        onClick={() => {
+                          const firstKey = parentKey.split(".")[0];
+                          const restKey = currentKey.slice(firstKey.length + 1);
+                          router.push(`/keys/${firstKey}?id=${restKey}`);
+                        }}
+                        className="w-10 h-10 flex items-center justify-center rounded text-black cursor-pointer"
                       >
                         <FontAwesomeIcon icon={faPen} className="w-4 h-4" />
                       </div>
                       <div
                         onClick={() => setDeleteKey(parentKey + "." + key)}
-                        className="w-10 h-10 flex items-center justify-center rounded bg-gradient-to-tl from-red-600 to-rose-400 text-white cursor-pointer"
+                        className="w-10 h-10 flex items-center justify-center rounded text-black cursor-pointer"
                       >
                         <FontAwesomeIcon icon={faTrash} className="w-4 h-4" />
                       </div>
@@ -176,12 +181,16 @@ const RenderObject = ({
                               <p className="text-left">{String(item)}</p>
                               <div className="flex justify-end gap-1 pr-1">
                                 <div
-                                  onClick={() =>
-                                    console.log(
-                                      parentKey + "." + key + `[${idx}]`
-                                    )
-                                  }
-                                  className="w-10 h-10 flex items-center justify-center rounded bg-gradient-to-tl from-slate-800 to-gray-900 text-white cursor-pointer"
+                                  onClick={() => {
+                                    const firstKey = parentKey.split(".")[0];
+                                    const restKey = currentKey.slice(
+                                      firstKey.length + 1
+                                    );
+                                    router.push(
+                                      `/keys/${firstKey}?id=${restKey}[${idx}]`
+                                    );
+                                  }}
+                                  className="w-10 h-10 flex items-center justify-center rounded text-black cursor-pointer"
                                 >
                                   <FontAwesomeIcon
                                     icon={faPen}
@@ -194,7 +203,7 @@ const RenderObject = ({
                                       parentKey + "." + key + `[${idx}]`
                                     )
                                   }
-                                  className="w-10 h-10 flex items-center justify-center rounded bg-gradient-to-tl from-red-600 to-rose-400 text-white cursor-pointer"
+                                  className="w-10 h-10 flex items-center justify-center rounded bg-gradient-to-tl text-black cursor-pointer"
                                 >
                                   <FontAwesomeIcon
                                     icon={faTrash}

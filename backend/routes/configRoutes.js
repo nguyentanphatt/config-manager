@@ -3,6 +3,7 @@ import {
   addConfigItem,
   deleteConfigItem,
   fetchConfig,
+  fetchConfigByParentKey,
   fetchConfigItemByKey,
   fetchTopLevelKeys,
   updateConfigItem,
@@ -15,4 +16,5 @@ router.delete("/config/delete/:key", deleteConfigItem);
 router.put("/config/update/:key", updateConfigItem);
 router.post("/config/add", addConfigItem);
 router.get("/config/:key", fetchConfigItemByKey);
+router.get("/config/parent/:parentKey", fetchConfigByParentKey);
 export default router;
