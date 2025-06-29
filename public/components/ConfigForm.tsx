@@ -9,8 +9,6 @@ const ConfigForm = ({
   focusKey,
 }: ConfigInputProps) => {
   if (typeof data !== "object" || data === null) {
-    console.log("parent", parentPath);
-
     return (
       <input
         type="text"

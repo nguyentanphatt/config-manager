@@ -3,6 +3,7 @@ export type ConfigInputProps = {
   parentPath?: string;
   onChange?: (fullKey: string, value: any) => void;
   focusKey?: string;
+  edit?: boolean;
 };
 
 export interface SearchInputProps {
@@ -15,4 +16,14 @@ export interface ObjectField {
   key: string;
   type: string;
   value: string;
+}
+
+export interface EditFormProps {
+  data: any;
+  onChange: (newData: any) => void;
+}
+
+export interface AddFieldFormProps {
+  onAdd: (key: string, value: any) => void;
+  existingKeys?: string[];
 }

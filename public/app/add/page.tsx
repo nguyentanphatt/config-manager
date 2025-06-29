@@ -11,7 +11,7 @@ import { toast } from "sonner";
 
 const Page = () => {
   const [mainKey, setMainKey] = useState("");
-  const [selectedType, setSelectedType] = useState("");
+  const [selectedType, setSelectedType] = useState("number");
   const [mainValue, setMainValue] = useState("");
   const [objectFields, setObjectFields] = useState<ObjectField[]>([]);
   const [mainKeyError, setMainKeyError] = useState<string | null>(null);
@@ -170,7 +170,7 @@ const Page = () => {
 
     if (!data) return;
     try {
-      await addConfigData(data.key, data.type, data.value);
+      await addConfigData(data.key, data.value);
       toast.success("Add config successful!");
     } catch (error) {
       toast.error("Error: " + error);
@@ -290,7 +290,6 @@ const Page = () => {
                               Sub Key {idx + 1}
                             </label>
 
-                            {/* Sub Key input */}
                             <input
                               type="text"
                               value={field.key}
@@ -324,7 +323,7 @@ const Page = () => {
                             <span className="h-4" />
                           )}
                         </div>
-                        {/* Type select */}
+
                         <div className="flex flex-col w-[30%]">
                           <select
                             value={field.type}

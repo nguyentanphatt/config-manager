@@ -34,10 +34,9 @@ export const updateConfigData = async (key: string, data: any) => {
   return response;
 };
 
-export const addConfigData = async (key: string, type: any, value: any) => {
+export const addConfigData = async (key: string, value: any) => {
   const response = await http.post(`${API_PREFIX}/config/add`, {
     key,
-    type,
     value,
   });
   return response;

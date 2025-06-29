@@ -4,6 +4,7 @@ import RenderObject from "@/components/RenderObject";
 import { fetchConfig, fetchConfigBySearchParams } from "@/module/configService";
 import { faPen } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function Home() {
@@ -11,6 +12,7 @@ export default function Home() {
   const [search, setSearch] = useState("");
   const [configData, setConfigData] = useState();
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
   const fetchData = async () => {
     setLoading(true);
     try {
@@ -45,7 +47,10 @@ export default function Home() {
                   <div key={groupKey}>
                     <div className="w-full flex items-center justify-between border border-gray-300 border-l-0 border-r-0 font-bold p-2 mb-2">
                       {groupKey}
-                      <div className="w-5 h-5 flex items-center justify-center rounded text-black cursor-pointer">
+                      <div
+                        className="w-5 h-5 flex items-center justify-center rounded text-black cursor-pointer"
+                        onClick={() => router.push(`/keys/${groupKey}?edit`)}
+                      >
                         <FontAwesomeIcon icon={faPen} className="w-4 h-4" />
                       </div>
                     </div>

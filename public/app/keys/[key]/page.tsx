@@ -1,23 +1,29 @@
 "use client";
 import ConfigForm from "@/components/ConfigForm";
+import { EditForm } from "@/components/EditForm";
 import Header from "@/components/Header";
 import { descriptions } from "@/contants/data";
 import { updateNestedValue } from "@/lib/updateNestedValue";
 import {
+  addConfigData,
+  addToExistingKey,
   fetchConfigDataByParentKey,
   updateConfigData,
 } from "@/module/configService";
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 const Page = () => {
   const [search, setSearch] = useState("");
   const [data, setData] = useState<Record<string, any>>({});
+  const [addData, setAddData] = useState<any>();
   const [originalData, setOriginalData] = useState<Record<string, any>>({});
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
   const searchParams = useSearchParams();
   const focusKey = searchParams?.get("id") ?? "";
+  const edit = searchParams?.has("edit");
   const { key } = useParams();
   const fetchParentData = async () => {
     setLoading(true);
@@ -42,13 +48,25 @@ const Page = () => {
     toast.success("Reset successful");
   };
 
-  const handleUpdate = async () => {
-    try {
-      await updateConfigData(String(key), data);
-      toast.success("Update successful");
-    } catch (error) {
-      console.error("Update failed", error);
-      toast.error("Update failed");
+  const handleApply = async () => {
+    if (edit) {
+      try {
+        await addConfigData(String(key), addData);
+        await fetchParentData();
+        toast.success("Add successful");
+        router.push(`/keys/${key}`);
+      } catch (error) {
+        console.error("Add failed", error);
+        toast.error("Add failed");
+      }
+    } else {
+      try {
+        await updateConfigData(String(key), data);
+        toast.success("Update successful");
+      } catch (error) {
+        console.error("Update failed", error);
+        toast.error("Update failed");
+      }
     }
   };
 
@@ -68,11 +86,20 @@ const Page = () => {
                 {descriptions[String(key)]}
               </div>
             )}
-            <ConfigForm
-              data={data}
-              onChange={handleChange}
-              focusKey={focusKey}
-            />
+            {edit ? (
+              <EditForm
+                data={data}
+                onChange={(newData) => {
+                  setAddData(newData);
+                }}
+              />
+            ) : (
+              <ConfigForm
+                data={data}
+                onChange={handleChange}
+                focusKey={focusKey}
+              />
+            )}
           </div>
           <div className="flex gap-2 py-5 justify-end mx-2 lg:mx-0 lg:mr-7">
             <button
@@ -84,7 +111,7 @@ const Page = () => {
             </button>
             <button
               type="button"
-              onClick={handleUpdate}
+              onClick={handleApply}
               className="inline-block px-6 py-3 mr-3 font-bold text-center text-white uppercase align-middle transition-all rounded-lg cursor-pointer bg-gradient-to-tl from-purple-700 to-pink-500 leading-pro text-xs ease-soft-in tracking-tight-soft shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85 hover:shadow-soft-xs"
             >
               Apply

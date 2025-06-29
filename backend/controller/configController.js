@@ -5,14 +5,16 @@ import { getNestedTarget } from "../utils/getNestedTarget.js";
 import { parseKeyPath } from "../utils/parseKeyPath.js";
 import { containsDeepKeyOnly } from "../utils/containsDeepKeyOnly.js";
 import { unwrapObjectValues } from "../utils/unwrapObjectValues.js";
+import { decrypt, encrypt } from "../utils/cryptoConfig.js";
+import dayjs from "dayjs";
 /**
  * @description
  * Read data from config.json
  * Return response in json
  */
 export const fetchConfig = async (req, res) => {
-  const data = JSON.parse(fs.readFileSync("./config.json", "utf8"));
-  //const flattened = flattenObject(data);
+  const encrypted = fs.readFileSync("./config.json", "utf8");
+  const data = JSON.parse(decrypt(encrypted));
   res.json(data);
 };
 
@@ -34,7 +36,18 @@ export const fetchConfig = async (req, res) => {
 export const deleteConfigItem = async (req, res) => {
   const { key } = req.params;
   const keys = parseKeyPath(key);
-  const data = JSON.parse(fs.readFileSync("./config.json", "utf8"));
+  const encrypted = fs.readFileSync("./config.json", "utf8");
+
+  // Tạo thư mục logs nếu chưa có
+  const logsDir = path.resolve("./logs");
+  if (!fs.existsSync(logsDir)) {
+    fs.mkdirSync(logsDir);
+  }
+  const backupFileName = `${dayjs().format("YYYYMMDD")}_config.json`;
+  const backupFilePath = path.join(logsDir, backupFileName);
+  fs.writeFileSync(backupFilePath, encrypted, "utf8");
+
+  const data = JSON.parse(decrypt(encrypted));
 
   const parent = getNestedTarget(data, keys);
   const lastKey = keys[keys.length - 1];
@@ -104,8 +117,8 @@ export const deleteConfigItem = async (req, res) => {
       }
     }
   }
-
-  fs.writeFileSync("./config.json", JSON.stringify(data, null, 2), "utf8");
+  const encryptedResult = encrypt(JSON.stringify(data, null, 2));
+  fs.writeFileSync("./config.json", encryptedResult, "utf8");
   res.json({ success: true });
 };
 
@@ -134,13 +147,21 @@ export const updateConfigItem = async (req, res) => {
   }
 
   const keys = parseKeyPath(key); // xử lý "minio.endPoints[0]" nếu cần
-  const data = JSON.parse(fs.readFileSync("./config.json", "utf8"));
+  const encrypted = fs.readFileSync("./config.json", "utf8");
 
-  // Nếu chỉ là 1 key top-level như "server", "auth", "minio"
+  // Tạo thư mục logs nếu chưa có
+  const logsDir = path.resolve("./logs");
+  if (!fs.existsSync(logsDir)) {
+    fs.mkdirSync(logsDir);
+  }
+  const backupFileName = `${dayjs().format("YYYYMMDD")}_config.json`;
+  const backupFilePath = path.join(logsDir, backupFileName);
+  fs.writeFileSync(backupFilePath, encrypted, "utf8");
+
+  const data = JSON.parse(decrypt(encrypted));
   if (keys.length === 1) {
     data[keys[0]] = value;
   } else {
-    // xử lý lồng nhau như minio.endPoints[0].port
     const parent = getNestedTarget(data, keys);
     const lastKey = keys[keys.length - 1];
 
@@ -158,40 +179,10 @@ export const updateConfigItem = async (req, res) => {
       parent[lastKey] = value;
     }
   }
-
-  fs.writeFileSync("./config.json", JSON.stringify(data, null, 2), "utf8");
+  const encryptedResult = encrypt(JSON.stringify(data, null, 2));
+  fs.writeFileSync("./config.json", encryptedResult, "utf8");
   res.json({ success: true });
 };
-/* export const updateConfigItem = async (req, res) => {
-  const { key } = req.params;
-  const { value } = req.body;
-
-  if (typeof value === "undefined") {
-    return res.status(400).json({ error: "Value is required" });
-  }
-
-  const keys = parseKeyPath(key);
-  const data = JSON.parse(fs.readFileSync("./config.json", "utf8"));
-  const parent = getNestedTarget(data, keys);
-  const lastKey = keys[keys.length - 1];
-
-  if (!parent || typeof parent !== "object") {
-    return res.status(404).json({ error: "Key not found" });
-  }
-
-  if (Array.isArray(parent)) {
-    const index = parseInt(lastKey);
-    if (isNaN(index) || index >= parent.length) {
-      return res.status(400).json({ error: "Invalid array index" });
-    }
-    parent[index] = value;
-  } else {
-    parent[lastKey] = value;
-  }
-
-  fs.writeFileSync("./config.json", JSON.stringify(data, null, 2), "utf8");
-  res.json({ success: true });
-}; */
 
 /**
  *
@@ -206,49 +197,30 @@ export const updateConfigItem = async (req, res) => {
  */
 
 export const addConfigItem = async (req, res) => {
-  const { key, type, value } = req.body;
-
+  const { key, value } = req.body;
   if (!key || value === undefined) {
     return res.status(400).json({ error: "Key and value are required" });
   }
 
-  let finalValue = value;
+  const encrypted = fs.readFileSync("./config.json", "utf8");
 
-  if (
-    typeof type === "string" &&
-    type.startsWith("array<") &&
-    typeof value === "string"
-  ) {
-    try {
-      finalValue = JSON.parse(value);
-      if (!Array.isArray(finalValue)) {
-        return res
-          .status(400)
-          .json({ error: "Value phải là mảng JSON hợp lệ" });
-      }
-    } catch {
-      return res.status(400).json({ error: "Value không phải là JSON hợp lệ" });
-    }
+  const logsDir = path.resolve("./logs");
+  if (!fs.existsSync(logsDir)) {
+    fs.mkdirSync(logsDir);
   }
+  const backupFileName = `${dayjs().format("YYYYMMDD")}_config.json`;
+  const backupFilePath = path.join(logsDir, backupFileName);
+  fs.writeFileSync(backupFilePath, encrypted, "utf8");
 
-  if (
-    typeof type === "string" &&
-    type === "object" &&
-    value &&
-    typeof value === "object" &&
-    !Array.isArray(value)
-  ) {
-    finalValue = unwrapObjectValues(value);
-  }
+  const data = JSON.parse(decrypt(encrypted));
 
-  const configPath = path.resolve("./config.json");
-  const data = JSON.parse(fs.readFileSync(configPath, "utf8"));
+  data[key] = unwrapObjectValues(value);
 
-  data[key] = finalValue;
-
-  fs.writeFileSync(configPath, JSON.stringify(data, null, 2), "utf8");
+  const encryptedResult = encrypt(JSON.stringify(data, null, 2));
+  fs.writeFileSync("./config.json", encryptedResult, "utf8");
   res.json({ success: true });
 };
+
 /**
  *
  * @param {*} req
@@ -260,7 +232,8 @@ export const addConfigItem = async (req, res) => {
 export const fetchConfigItemByKey = async (req, res) => {
   const { key } = req.params;
   const search = key?.toLowerCase();
-  const data = JSON.parse(fs.readFileSync("./config.json", "utf8"));
+  const encrypted = fs.readFileSync("./config.json", "utf8");
+  const data = JSON.parse(decrypt(encrypted));
 
   if (!search) return res.json(data);
 
@@ -292,7 +265,8 @@ export const fetchConfigItemByKey = async (req, res) => {
  */
 export const fetchTopLevelKeys = async (req, res) => {
   try {
-    const data = JSON.parse(fs.readFileSync("./config.json", "utf8"));
+    const encrypted = fs.readFileSync("./config.json", "utf8");
+    const data = JSON.parse(decrypt(encrypted));
     const topLevelKeys = Object.keys(data);
     res.json(topLevelKeys);
   } catch (error) {
@@ -303,11 +277,11 @@ export const fetchTopLevelKeys = async (req, res) => {
 
 export const fetchConfigByParentKey = async (req, res) => {
   const { parentKey } = req.params;
-  const data = JSON.parse(fs.readFileSync("./config.json", "utf8"));
+  const encrypted = fs.readFileSync("./config.json", "utf8");
+  const data = JSON.parse(decrypt(encrypted));
 
   if (!data.hasOwnProperty(parentKey)) {
     return res.status(404).json({ error: "Parent key not found" });
   }
   return res.json(data[parentKey]);
-  //return res.json({ [parentKey]: data[parentKey] });
 };
