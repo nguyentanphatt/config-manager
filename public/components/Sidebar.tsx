@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faChevronRight,
+  faFile,
   faListUl,
   faPlus,
   faTable,
@@ -66,7 +67,7 @@ const Sidebar = () => {
           </div>
         </div>
         <div
-          className={`overflow-hidden transition-all duration-300 ease-in-out ${
+          className={`overflow-y-auto transition-all duration-300 ease-in-out scrollbar-hide ${
             open ? "max-h-60 opacity-100 my-2" : "max-h-0 opacity-0"
           }`}
         >
@@ -101,6 +102,16 @@ const Sidebar = () => {
             <FontAwesomeIcon icon={faPlus} className=" text-white" size="xl" />
           </div>
           <p className="text-base text-black font-bold">Add Variable</p>
+        </div>
+
+        <div
+          onClick={() => router.push("/log")}
+          className="mt-2 flex items-center gap-2 p-2 bg-white rounded-md cursor-pointer border border-gray-300"
+        >
+          <div className="inline-block px-3.5 py-3 font-bold text-center text-white uppercase align-middle transition-all rounded-lg cursor-pointer bg-gradient-to-tl from-purple-700 to-pink-500 leading-pro text-xs ease-soft-in tracking-tight-soft shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85 hover:shadow-soft-xs">
+            <FontAwesomeIcon icon={faFile} className=" text-white" size="xl" />
+          </div>
+          <p className="text-base text-black font-bold">Logs</p>
         </div>
       </div>
     </div>

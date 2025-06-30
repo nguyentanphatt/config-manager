@@ -6,6 +6,7 @@ import { getValidationError, parseValueByType } from "@/lib/validateData";
 import { addConfigData, fetchTopKeyConfig } from "@/module/configService";
 import { faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -21,6 +22,7 @@ const Page = () => {
     Record<number, { key?: string; type?: string; value?: string }>
   >({});
   const [topkey, setTopkey] = useState<string[]>([]);
+  const router = useRouter();
   const handleAddObjectField = () => {
     setObjectFields((prev) => [
       ...prev,
@@ -166,12 +168,16 @@ const Page = () => {
   const handleAddConfig = async () => {
     if (!validateAll()) return;
     const data = generateOutput();
-    console.log(data);
 
     if (!data) return;
     try {
-      await addConfigData(data.key, data.value);
-      toast.success("Add config successful!");
+      const res = await addConfigData(data.key, data.value);
+      if (res.success) {
+        toast.success("Add config successful!");
+        router.push("/");
+      } else {
+        toast.error("Something wrong!");
+      }
     } catch (error) {
       toast.error("Error: " + error);
     }

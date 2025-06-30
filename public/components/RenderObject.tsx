@@ -6,7 +6,7 @@ import {
   faPen,
   faTrash,
 } from "@fortawesome/free-solid-svg-icons";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { deleteConfigKey } from "@/module/configService";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -16,7 +16,7 @@ interface RenderObjectProps {
   parentKey: string;
   level?: number;
   openKeys: { [key: string]: boolean };
-  setOpenKeys: React.Dispatch<React.SetStateAction<{ [key: string]: boolean }>>;
+  setOpenKeys: Dispatch<SetStateAction<{ [key: string]: boolean }>>;
   fetchData: () => Promise<void>;
 }
 

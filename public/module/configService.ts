@@ -41,3 +41,22 @@ export const addConfigData = async (key: string, value: any) => {
   });
   return response;
 };
+
+export const fetchBackup = async () => {
+  const response = await http.get<{ filename: string; time: string }[]>(
+    `${API_PREFIX}/config/backup`
+  );
+  return response;
+};
+
+export const fetchBackupDetail = async (filename: string) => {
+  const response = await http.get(`${API_PREFIX}/config/backup/${filename}`);
+  return response;
+};
+
+export const rollback = async (filename: string) => {
+  const response = await http.get(
+    `${API_PREFIX}/config/backup/rollback/${filename}`
+  );
+  return response;
+};

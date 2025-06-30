@@ -31,6 +31,7 @@ export default function Home() {
   useEffect(() => {
     fetchData();
   }, [search]);
+
   return (
     <div className="flex flex-col w-full">
       <Header value={search} onChange={setSearch} />
@@ -47,6 +48,9 @@ export default function Home() {
                   <div key={groupKey}>
                     <div className="w-full flex items-center justify-between border border-gray-300 border-l-0 border-r-0 font-bold p-2 mb-2">
                       {groupKey}
+                      {typeof groupValue != "object" ? (
+                        <p>{String(groupValue)}</p>
+                      ) : null}
                       <div
                         className="w-5 h-5 flex items-center justify-center rounded text-black cursor-pointer"
                         onClick={() => router.push(`/keys/${groupKey}?edit`)}
