@@ -172,14 +172,16 @@ const Page = () => {
     if (!data) return;
     try {
       const res = await addConfigData(data.key, data.value);
+      console.log("Res", res);
+
       if (res.success) {
         toast.success("Add config successful!");
         router.push("/");
       } else {
         toast.error("Something wrong!");
       }
-    } catch (error) {
-      toast.error("Error: " + error);
+    } catch {
+      toast.error("Please login to use this action");
     }
   };
   return (

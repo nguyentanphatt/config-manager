@@ -1,14 +1,22 @@
 "use client";
 import { faBars, faSearch, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Sidebar from "./Sidebar";
 import { useRouter } from "next/navigation";
 import { SearchInputProps } from "@/contants/type";
+import { getAuthToken } from "@/lib/getAuthToken";
+import { deleteAuthToken } from "@/lib/deleteAuthToken";
 
 const Header = ({ value, onChange }: SearchInputProps) => {
   const [open, setOpen] = useState(false);
+  const [token, setToken] = useState<string | null>(null);
   const router = useRouter();
+
+  useEffect(() => {
+    getAuthToken().then(setToken);
+  }, []);
+
   return (
     <div className="w-full flex items-center justify-between px-5 lg:px-0 lg:pr-10 py-5">
       <div
@@ -44,13 +52,26 @@ const Header = ({ value, onChange }: SearchInputProps) => {
           placeholder="Type here..."
         />
       </div>
-      <div
-        className="flex gap-2 items-center cursor-pointer"
-        onClick={() => router.push("/login")}
-      >
-        <FontAwesomeIcon icon={faUser} size="1x" />
-        <p>Sign in</p>
-      </div>
+      {token ? (
+        <div
+          className="flex gap-2 items-center cursor-pointer"
+          onClick={() => {
+            deleteAuthToken();
+            router.push("/login");
+          }}
+        >
+          <FontAwesomeIcon icon={faUser} size="1x" />
+          <p>Sign out</p>
+        </div>
+      ) : (
+        <div
+          className="flex gap-2 items-center cursor-pointer"
+          onClick={() => router.push("/login")}
+        >
+          <FontAwesomeIcon icon={faUser} size="1x" />
+          <p>Sign in</p>
+        </div>
+      )}
     </div>
   );
 };

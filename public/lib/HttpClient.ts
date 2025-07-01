@@ -26,7 +26,7 @@ export class HttpClient {
   private axios: AxiosInstance;
 
   constructor(baseURL: string) {
-    this.axios = axios.create({ baseURL });
+    this.axios = axios.create({ baseURL, withCredentials: true });
   }
 
   private async wrap<T>(promise: Promise<any>): Promise<T | null> {

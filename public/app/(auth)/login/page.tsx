@@ -1,13 +1,28 @@
 "use client";
+import { setAuthToken } from "@/lib/setAuthToken";
+import { login } from "@/module/userService";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+import { toast } from "sonner";
 
 const Page = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-
-  const handleLogin = () => {
-    alert("username: " + username + " password: " + password);
+  const [token, setToken] = useState<any>();
+  const router = useRouter();
+  const handleLogin = async () => {
+    const res = await login(username, password);
+    if (res && res.token) {
+      setToken(res.token);
+      await setAuthToken(res.token);
+      toast.success("Login successful");
+      console.log("token", token);
+      router.push("/");
+    } else {
+      toast.error("Login failed");
+    }
   };
+
   return (
     <div className="w-full h-screen flex items-center justify-center">
       <div className="flex flex-col gap-5 bg-white min-w-xs md:min-w-md px-5 pt-5 pb-10 rounded-md">
