@@ -1,4 +1,5 @@
 import axios, { AxiosHeaders, AxiosRequestHeaders, AxiosInstance } from "axios";
+import { encryptRSA } from "./encryptRSA";
 
 export const getToken = (): string | null => {
   try {
@@ -7,6 +8,12 @@ export const getToken = (): string | null => {
   } catch {
     return null;
   }
+};
+
+const prepareEncryptedPayload = async (data: any): Promise<any> => {
+  if (!data) return undefined;
+  const encrypted = await encryptRSA(data);
+  return { encrypted };
 };
 
 const withAuth = (headers: AxiosHeaders = new AxiosHeaders()): AxiosHeaders => {
@@ -20,6 +27,7 @@ interface RequestConfig {
   params?: object;
   data?: object;
   apiName?: string;
+  skipEncrypt?: boolean;
 }
 
 export class HttpClient {
@@ -39,43 +47,69 @@ export class HttpClient {
     }
   }
 
-  get = <T = any>(url: string, cfg: RequestConfig = {}) =>
-    this.wrap<T>(
+  get = async <T = any>(url: string, cfg: RequestConfig = {}) => {
+    let encryptedParams = cfg.params;
+    if (cfg.params) {
+      const encrypted = await encryptRSA(cfg.params);
+      encryptedParams = { encrypted };
+    }
+    return this.wrap<T>(
       this.axios.get(url, {
         headers: withAuth(new AxiosHeaders(cfg.headers)),
         ...cfg,
+        params: encryptedParams,
       })
     );
+  };
 
-  post = <T = any>(url: string, data: any = null, cfg: RequestConfig = {}) =>
-    this.wrap<T>(
-      this.axios.post(url, data, {
+  post = async <T = any>(
+    url: string,
+    data: any = null,
+    cfg: RequestConfig = {}
+  ) => {
+    const payload = cfg.skipEncrypt
+      ? data
+      : await prepareEncryptedPayload(data);
+    return this.wrap<T>(
+      this.axios.post(url, payload, {
         headers: withAuth(new AxiosHeaders(cfg.headers)),
         ...cfg,
       })
     );
+  };
 
-  put = <T = any>(url: string, data: any, cfg: RequestConfig = {}) =>
-    this.wrap<T>(
-      this.axios.put(url, data, {
+  put = async <T = any>(url: string, data: any, cfg: RequestConfig = {}) => {
+    const encryptedData = await prepareEncryptedPayload(data);
+    return this.wrap<T>(
+      this.axios.put(url, encryptedData, {
         headers: withAuth(new AxiosHeaders(cfg.headers)),
         ...cfg,
       })
     );
+  };
 
-  patch = <T = any>(url: string, data: any, cfg: RequestConfig = {}) =>
-    this.wrap<T>(
-      this.axios.patch(url, data, {
+  patch = async <T = any>(url: string, data: any, cfg: RequestConfig = {}) => {
+    const encryptedData = await prepareEncryptedPayload(data);
+    return this.wrap<T>(
+      this.axios.patch(url, encryptedData, {
         headers: withAuth(new AxiosHeaders(cfg.headers)),
         ...cfg,
       })
     );
+  };
 
-  delete = <T = any>(url: string, cfg: RequestConfig = {}) =>
-    this.wrap<T>(
+  delete = async <T = any>(url: string, cfg: RequestConfig = {}) => {
+    let encryptedParams = cfg.params;
+    if (cfg.params) {
+      const encrypted = await encryptRSA(cfg.params);
+      encryptedParams = { encrypted };
+    }
+    return this.wrap<T>(
       this.axios.delete(url, {
         headers: withAuth(new AxiosHeaders(cfg.headers)),
         ...cfg,
+        params: encryptedParams,
       })
     );
+  };
 }

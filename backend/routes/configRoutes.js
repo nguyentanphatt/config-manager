@@ -13,11 +13,15 @@ import {
 } from "../controller/configController.js";
 import { login } from "../controller/userController.js";
 import { authenticateToken } from "../middleware/authenticateToken.js";
+import { decryptRequest } from "../middleware/decryptRequest.js";
+import { encryptResponse } from "../middleware/encryptResponse.js";
 const router = express.Router();
 
 router.post("/login", login);
 
 router.use(authenticateToken);
+router.use(decryptRequest);
+router.use(encryptResponse);
 router.get("/config", fetchConfig);
 router.get("/config/topkey", fetchTopLevelKeys);
 router.get("/config/backup", getBackups);

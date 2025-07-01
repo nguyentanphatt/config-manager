@@ -7,10 +7,10 @@ const plain = fs.readFileSync(configPath, "utf8");
 try {
   JSON.parse(plain);
 } catch {
-  console.log("File đã được mã hóa, không cần encrypt lại.");
+  console.log("File has been encrypted.");
   process.exit(0);
 }
 
 const encrypted = encrypt(plain);
 fs.writeFileSync(configPath, encrypted, "utf8");
-console.log("Đã mã hóa file config.json thành công!");
+console.log("Encrypted config.json successful!");

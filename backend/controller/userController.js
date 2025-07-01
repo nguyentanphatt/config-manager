@@ -9,7 +9,8 @@ const PRIVATE_KEY_PATH = process.env.PRIVATE_KEY_PATH;
 const PRIVATE_KEY = fs.readFileSync(PRIVATE_KEY_PATH, "utf8");
 export const login = async (req, res) => {
   const { username, password } = req.body;
-
+  console.log("username", username);
+  console.log("password", password);
   const isValid = username === "admin" && password === "admin123";
   if (!isValid) return res.status(401).json({ message: "Invalid credentials" });
 

@@ -6,7 +6,7 @@ const SECRET_KEY = process.env.SECRET_KEY;
 const IV_LENGTH = 16;
 
 if (!SECRET_KEY || Buffer.from(SECRET_KEY, "utf8").length !== 32) {
-  throw new Error("SECRET_KEY phải là chuỗi 32 ký tự ASCII (32 bytes).");
+  throw new Error("SECRET_KEY must be (32 bytes).");
 }
 
 export function encrypt(text) {
