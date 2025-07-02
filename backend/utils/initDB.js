@@ -5,6 +5,7 @@ dotenv.config();
 sqlite3.verbose();
 
 const db = new sqlite3.Database("./secure.db");
+const ADMIN_PASSWORD = process.ev.ADMIN_PASSWORD;
 const SALT_ROUNDS = 10;
 
 export async function initDatabase() {
@@ -32,14 +33,11 @@ export async function initDatabase() {
           }
 
           if (row.count === 0) {
-            const pass1 = await bcrypt.hash("admin123", SALT_ROUNDS);
-            const pass2 = await bcrypt.hash("admin456", SALT_ROUNDS);
-
+            const pass = await bcrypt.hash(ADMIN_PASSWORD, SALT_ROUNDS);
             const stmt = db.prepare(
               `INSERT INTO users (username, password) VALUES (?, ?)`
             );
-            stmt.run("admin", pass1);
-            stmt.run("admin2", pass2);
+            stmt.run("admin", pass);
             stmt.finalize(() => {
               console.log("Sample users inserted.");
               db.close();
