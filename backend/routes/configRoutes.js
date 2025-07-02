@@ -21,10 +21,11 @@ router.post("/login", login);
 
 router.use(authenticateToken);
 router.use(decryptRequest);
-router.use(encryptResponse);
 router.get("/config", fetchConfig);
 router.get("/config/topkey", fetchTopLevelKeys);
 router.get("/config/backup", getBackups);
+
+router.use(encryptResponse);
 router.get("/config/:key", fetchConfigItemByKey);
 router.post("/config/add", addConfigItem);
 router.delete("/config/delete/:key", deleteConfigItem);

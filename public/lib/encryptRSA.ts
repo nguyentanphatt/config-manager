@@ -6,12 +6,10 @@ export async function encryptRSA(data: any): Promise<string> {
   if (!cachedPublicKey) {
     const res = await fetch("/rsa/public.pem");
     const pem = await res.text();
-    console.log("pem", pem);
-
     cachedPublicKey = forge.pki.publicKeyFromPem(pem);
   }
 
   const json = JSON.stringify(data);
-  const encrypted = (cachedPublicKey as any).encrypt(json, "RSAES-PKCS1-V1_5");
+  const encrypted = (cachedPublicKey as any).encrypt(json, "RSA-OAEP");
   return forge.util.encode64(encrypted);
 }

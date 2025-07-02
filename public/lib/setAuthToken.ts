@@ -9,6 +9,6 @@ export async function setAuthToken(token: string) {
     secure: true,
     sameSite: "strict",
     path: "/",
-    maxAge: 60 * 60 * 24 * 7, // 7 ngày
+    maxAge: 60 * 60, // 1h, 7d: 24 * 7
   });
 }

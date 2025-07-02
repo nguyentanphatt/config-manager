@@ -2,27 +2,48 @@ import fs from "fs";
 import path from "path";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import sqlite3 from "@journeyapps/sqlcipher";
+import bcrypt from "bcrypt";
 dotenv.config();
 
 const PRIVATE_KEY_PATH = process.env.PRIVATE_KEY_PATH;
-
 const PRIVATE_KEY = fs.readFileSync(PRIVATE_KEY_PATH, "utf8");
+const DB_PASSWORD = process.env.DB_PASSWORD;
+
 export const login = async (req, res) => {
   const { username, password } = req.body;
-  console.log("username", username);
-  console.log("password", password);
-  const isValid = username === "admin" && password === "admin123";
-  if (!isValid) return res.status(401).json({ message: "Invalid credentials" });
+  const db = new sqlite3.Database("./secure.db");
+  db.run(`PRAGMA key = '${DB_PASSWORD}';`);
 
-  const payload = {
-    sub: username,
-    role: "admin",
-  };
+  db.get(
+    `SELECT * FROM users WHERE username = ?`,
+    [username],
+    async (err, user) => {
+      if (err) {
+        db.close();
+        return res.status(500).json({ message: "Database error" });
+      }
+      if (!user) {
+        db.close();
+        return res.status(401).json({ message: "Invalid credentials" });
+      }
+      const isValid = await bcrypt.compare(password, user.password);
+      db.close();
+      if (!isValid) {
+        return res.status(401).json({ message: "Invalid credentials" });
+      }
 
-  const token = jwt.sign(payload, PRIVATE_KEY, {
-    algorithm: "RS256",
-    expiresIn: "1h",
-  });
+      const payload = {
+        sub: username,
+        role: "admin",
+      };
 
-  res.json({ token });
+      const token = jwt.sign(payload, PRIVATE_KEY, {
+        algorithm: "RS256",
+        expiresIn: "1h",
+      });
+
+      res.json({ token });
+    }
+  );
 };

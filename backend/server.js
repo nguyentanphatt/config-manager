@@ -3,6 +3,7 @@ import configRoutes from "./routes/configRoutes.js";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
+import { initDatabase } from "./utils/initDB.js";
 dotenv.config();
 
 const app = express();
@@ -24,6 +25,12 @@ app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
-app.listen(port, () => {
+app.listen(port, async () => {
   console.log(`Server is running at http://localhost:${port}`);
+  try {
+    await initDatabase();
+    console.log("Database initialized successfully.");
+  } catch (err) {
+    console.error("Failed to initialize database:", err);
+  }
 });

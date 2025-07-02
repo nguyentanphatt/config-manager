@@ -6,7 +6,6 @@ import { descriptions } from "@/contants/data";
 import { updateNestedValue } from "@/lib/updateNestedValue";
 import {
   addConfigData,
-  addToExistingKey,
   fetchConfigDataByParentKey,
   updateConfigData,
 } from "@/module/configService";
@@ -62,7 +61,9 @@ const Page = () => {
     } else {
       try {
         await updateConfigData(String(key), data);
+        await fetchParentData();
         toast.success("Update successful");
+        router.push(`/keys/${key}`);
       } catch (error) {
         console.error("Update failed", error);
         toast.error("Update failed");

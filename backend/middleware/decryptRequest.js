@@ -10,7 +10,7 @@ function decryptRSA(encryptedText) {
   const decrypted = crypto.privateDecrypt(
     {
       key: PRIVATE_KEY,
-      padding: crypto.constants.RSA_PKCS1_PADDING,
+      padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
     },
     buffer
   );

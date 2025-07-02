@@ -9,7 +9,7 @@ function encryptRSA(data) {
   const encrypted = crypto.publicEncrypt(
     {
       key: PUBLIC_KEY,
-      padding: crypto.constants.RSA_PKCS1_PADDING,
+      padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
     },
     buffer
   );

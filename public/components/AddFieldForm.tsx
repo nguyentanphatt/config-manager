@@ -61,7 +61,7 @@ const AddFieldForm = ({ onAdd, existingKeys }: AddFieldFormProps) => {
             <span className="h-4" />
           )}
         </div>
-        <div className="flex flex-col w-[40%]">
+        <div className="flex flex-col w-[40%] md:w-[50%]">
           <select
             id="type"
             value={type}
@@ -78,7 +78,7 @@ const AddFieldForm = ({ onAdd, existingKeys }: AddFieldFormProps) => {
         </div>
       </div>
       <div className="flex w-full gap-3">
-        <div className="flex flex-col w-[70%] md:w-[30%]">
+        <div className="flex flex-col w-[70%] md:w-[40%]">
           <input
             className={`border border-gray-300 w-full rounded-md px-2 py-1.5 ${
               errors.value ? "border-red-500" : "border-gray-30"
