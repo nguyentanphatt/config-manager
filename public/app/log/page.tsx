@@ -70,7 +70,7 @@ const Page = () => {
               {sortAsc ? "↑ Date" : "↓ Date"}
             </button>
           </div>
-          <div className="w-full overflow-y-auto scrollbar-hide flex md:flex-col gap-2 px-4 py-2 md:py-0">
+          <div className="w-full overflow-y-auto h-[45vh] md:h-[65vh] lg:h-[82vh] scrollbar-hide flex md:flex-col gap-2 px-4 py-2 md:py-0">
             {sortedBackupList.map((item, idx) => (
               <div
                 key={idx}

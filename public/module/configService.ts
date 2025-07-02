@@ -55,7 +55,7 @@ export const fetchBackupDetail = async (filename: string) => {
 };
 
 export const rollback = async (filename: string) => {
-  const response = await http.get(
+  const response = await http.post(
     `${API_PREFIX}/config/backup/rollback/${filename}`
   );
   return response;

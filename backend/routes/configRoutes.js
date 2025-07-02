@@ -32,5 +32,5 @@ router.delete("/config/delete/:key", deleteConfigItem);
 router.put("/config/update/:key", updateConfigItem);
 router.get("/config/parent/:parentKey", fetchConfigByParentKey);
 router.get("/config/backup/:filename", getBackupsDetail);
-router.get("/config/backup/rollback/:filename", rollbackBackup);
+router.post("/config/backup/rollback/:filename", rollbackBackup);
 export default router;
