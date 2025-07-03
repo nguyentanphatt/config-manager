@@ -1,25 +1,10 @@
-import axios, { AxiosHeaders, AxiosRequestHeaders, AxiosInstance } from "axios";
+import axios, { AxiosRequestHeaders, AxiosInstance } from "axios";
 import { encryptRSA } from "./encryptRSA";
-
-export const getToken = (): string | null => {
-  try {
-    const token = localStorage.getItem("accessToken");
-    return token ? `Bearer ${token}` : null;
-  } catch {
-    return null;
-  }
-};
 
 const prepareEncryptedPayload = async (data: any): Promise<any> => {
   if (!data) return undefined;
   const encrypted = await encryptRSA(data);
   return { encrypted };
-};
-
-const withAuth = (headers: AxiosHeaders = new AxiosHeaders()): AxiosHeaders => {
-  const token = getToken();
-  if (token) headers.set("Authorization", token);
-  return headers;
 };
 
 interface RequestConfig {
@@ -55,7 +40,6 @@ export class HttpClient {
     }
     return this.wrap<T>(
       this.axios.get(url, {
-        headers: withAuth(new AxiosHeaders(cfg.headers)),
         ...cfg,
         params: encryptedParams,
       })
@@ -72,7 +56,6 @@ export class HttpClient {
       : await prepareEncryptedPayload(data);
     return this.wrap<T>(
       this.axios.post(url, payload, {
-        headers: withAuth(new AxiosHeaders(cfg.headers)),
         ...cfg,
       })
     );
@@ -82,7 +65,6 @@ export class HttpClient {
     const encryptedData = await prepareEncryptedPayload(data);
     return this.wrap<T>(
       this.axios.put(url, encryptedData, {
-        headers: withAuth(new AxiosHeaders(cfg.headers)),
         ...cfg,
       })
     );
@@ -92,7 +74,6 @@ export class HttpClient {
     const encryptedData = await prepareEncryptedPayload(data);
     return this.wrap<T>(
       this.axios.patch(url, encryptedData, {
-        headers: withAuth(new AxiosHeaders(cfg.headers)),
         ...cfg,
       })
     );
@@ -106,7 +87,6 @@ export class HttpClient {
     }
     return this.wrap<T>(
       this.axios.delete(url, {
-        headers: withAuth(new AxiosHeaders(cfg.headers)),
         ...cfg,
         params: encryptedParams,
       })

@@ -12,9 +12,9 @@ const Page = () => {
   const router = useRouter();
   const handleLogin = async () => {
     const res = await login(username, password);
-    if (res && res.token) {
-      setToken(res.token);
-      await setAuthToken(res.token);
+    if (res) {
+      //setToken(res.token);
+      //await setAuthToken(res.token);
       toast.success("Login successful");
       console.log("token", token);
       router.push("/");

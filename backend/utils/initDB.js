@@ -5,7 +5,7 @@ dotenv.config();
 sqlite3.verbose();
 
 const db = new sqlite3.Database("./secure.db");
-const ADMIN_PASSWORD = process.ev.ADMIN_PASSWORD;
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 const SALT_ROUNDS = 10;
 
 export async function initDatabase() {
