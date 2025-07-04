@@ -3,7 +3,6 @@ import crypto from "crypto";
 
 const PRIVATE_KEY_PATH = process.env.PRIVATE_KEY_PATH;
 const PRIVATE_KEY = fs.readFileSync(PRIVATE_KEY_PATH, "utf8");
-//const PRIVATE_KEY = fs.readFileSync("keys/private.pem", "utf8");
 
 function decryptRSA(encryptedText) {
   const buffer = Buffer.from(encryptedText, "base64");

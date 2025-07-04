@@ -1,5 +1,4 @@
 import fs from "fs";
-import path from "path";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import sqlite3 from "@journeyapps/sqlcipher";

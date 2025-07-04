@@ -2,7 +2,7 @@
  *
  * @param {*} obj
  * @returns
- * Receive object {type, value} or value to get value
+ * Receive object {type, value} or {value} to get value
  * Object loop each key to return {type, value}
  * Array loop again to return {type, value} to get value
  */

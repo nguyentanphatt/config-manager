@@ -1,7 +1,12 @@
 import fs from "fs";
 import path from "path";
 import dayjs from "dayjs";
-
+/**
+ *
+ * @param {*} file
+ * @returns
+ * Save backup file to folder logs and conver file name to YYYMMDD_HHmmss_cong.json
+ */
 export function saveBackup(file) {
   const logsDir = path.resolve("./logs");
   if (!fs.existsSync(logsDir)) {

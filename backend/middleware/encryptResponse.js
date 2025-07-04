@@ -1,7 +1,6 @@
 import fs from "fs";
 import crypto from "crypto";
 
-//const PUBLIC_KEY = fs.readFileSync("keys/public.pem", "utf8");
 const PUBLIC_KEY_PATH = process.env.PUBLIC_KEY_PATH;
 const PUBLIC_KEY = fs.readFileSync(PUBLIC_KEY_PATH, "utf8");
 function encryptRSA(data) {

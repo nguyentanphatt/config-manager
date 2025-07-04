@@ -4,6 +4,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 import { initDatabase } from "./utils/initDB.js";
+import { encryptConfigFile } from "./utils/encryptConfigFile.js";
 dotenv.config();
 
 const app = express();
@@ -13,8 +14,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
-    origin: process.env.ALLOW_PORT, //Chỉ định đúng domain
-    credentials: true, // Cho phép gửi cookie
+    origin: process.env.ALLOW_PORT, //domain
+    credentials: true, //cookie
   })
 );
 app.use(cookieParser());
@@ -27,6 +28,7 @@ app.get("/", (req, res) => {
 
 app.listen(port, async () => {
   console.log(`Server is running at http://localhost:${port}`);
+  encryptConfigFile();
   try {
     await initDatabase();
     console.log("Database initialized successfully.");
